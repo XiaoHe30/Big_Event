@@ -1,30 +1,25 @@
 package com.xiaohe.controller;
 
+import com.xiaohe.pojo.Article;
 import com.xiaohe.pojo.Result;
-import com.xiaohe.utils.JwtUtil;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
+import com.xiaohe.service.ArticleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/article")
 public class ArticleController {
 
-    @GetMapping("/list")
-    public Result<String> list(/*@RequestHeader(name = "Authorization") String token, HttpServletResponse response*/){
-        //验证token
-        /*try {
-            Map<String, Object> claims = JwtUtil.parseToken(token);
-            return Result.success("所有的文章数据...");
-        } catch (Exception e) {
-            //http响应状态码为401
-            response.setStatus(401);
-            return Result.error("未登录");
-        }*/
-        return Result.success("所有的文章数据...");
+    @Autowired
+    private ArticleService articleService;
+
+    @PostMapping
+    public Result add(@RequestBody @Validated Article article){
+        articleService.add(article);
+        return Result.success();
     }
 }

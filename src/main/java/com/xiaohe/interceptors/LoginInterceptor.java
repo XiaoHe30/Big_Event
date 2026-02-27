@@ -1,8 +1,10 @@
 package com.xiaohe.interceptors;
 
 import com.xiaohe.utils.JwtUtil;
+import com.xiaohe.utils.ThreadLocalUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -17,6 +19,10 @@ public class LoginInterceptor implements HandlerInterceptor {
         //验证token
         try {
             Map<String, Object> claims = JwtUtil.parseToken(token);
+
+            //把业务数据存储到ThreadLocal中
+            ThreadLocalUtil.set(claims);
+
             //放行
             return true;
         } catch (Exception e) {
@@ -25,5 +31,11 @@ public class LoginInterceptor implements HandlerInterceptor {
             //不放行
             return false;
         }
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
+        //清空ThreadLocal中的数据
+        ThreadLocalUtil.remove();
     }
 }
